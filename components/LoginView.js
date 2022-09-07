@@ -1,12 +1,13 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import tw from "twrnc"
-import React from 'react'
+import React, { useRef } from 'react'
 import { useNavigation } from '@react-navigation/native';
 
 const LoginView = () => {
     const [username, onChangeUsername] = React.useState(null);
     const [password, onChangePassword] = React.useState(null);
     const navigation = useNavigation();
+    let passwordRef = useRef();
 
   return (
     <View style={tw`h-full p-10 justify-center items-center`}>
@@ -18,15 +19,25 @@ const LoginView = () => {
       value={username}
       placeholder="Username"
       style={tw`w-80 h-15 pl-5 rounded-lg bg-gray-300`}
+      autoCapitalize="none"
+      onSubmitEditing={() => {
+        if (username) {
+            passwordRef.focus();
+        }
+      }}
       />
 
       {/* Password */}
       <TextInput 
+      ref={(input) => {
+        passwordRef = input;
+      }}
       onChangeText={onChangePassword}
       value={password}
       placeholder="Password"
       style={tw`w-80 h-15 mt-3 pl-5 rounded-lg bg-gray-300`}
       secureTextEntry={true}
+      autoCapitalize="none"
       />
 
       {/* Forgot password 'link' */}

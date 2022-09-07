@@ -1,10 +1,11 @@
 import { StyleSheet, Animated, Alert } from 'react-native'
 import React, { useEffect, useRef } from 'react'
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as Location from "expo-location";
 import { setSplashFinished } from '../slices/initialLoadSlice';
 import { setOrigin } from '../slices/navSlice';
 import { useNavigation } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 
 const LoadingScreen = () => {
     const dispatch = useDispatch();
@@ -30,7 +31,16 @@ const LoadingScreen = () => {
                 // IMPL later
                 // If the app has loaded we want to move on. 
                 // Now we just move on if animation itself has run its course
-                navigation.navigate("Signin");
+
+                // This resets the stack, so we cant swipe back to splash screen
+                navigation.dispatch(
+                    CommonActions.reset({
+                        index: 0,
+                        routes: [
+                            { name: "Signin"},
+                        ]
+                    })
+                );
             }
         });
 
