@@ -8,6 +8,12 @@ React Native, Redux & Tailwind
 Splash, Login, Signup, location checkup, routing, pricing
 - Backend for login/signup in another repo. 
 
+# Backend handles:
+-Login
+-Signup
+-frequent routes population
+-adding frequent routes.
+
 
 # Main functionalities in a gif: 
 
