@@ -9,4 +9,6 @@ Splash, Login, Signup, location checkup, routing, pricing
 - Backend for login/signup in another repo. 
 
 
-# Ill include a gif of the ui later
+# Main functionalities in a gif: 
+
+![](https://github.com/Itsdarkhere/TaxiApp_React_Native/blob/main/app_gif.gif)
