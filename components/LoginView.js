@@ -9,7 +9,6 @@ import { setUsername } from '../slices/userSlice';
 const LoginView = () => {
     const [username, onChangeUsername] = React.useState(null);
     const [password, onChangePassword] = React.useState(null);
-    const [invalidLogin, setInvalidLogin] = React.useState(false);
     const dispatch = useDispatch();
     const navigation = useNavigation();
     let passwordRef = useRef();
@@ -25,19 +24,26 @@ const LoginView = () => {
       });
 
       if (res?.data?.success) {
-        setInvalidLogin(false);
-
         // In prod we would use react-native-keychain
         // to store the login, but expo managed workflow does not support native modules.
         // And since Im not going even close to prod with this, I wont spend time on it
         
         // Store username in state, to use in common address related activities
         dispatch(setUsername(username));
-        // Navigate to start
-        navigation.navigate("Start");
+        // This resets the stack, so we cant swipe back to splash screen
+        navigation.dispatch(
+          CommonActions.reset({
+              index: 0,
+              routes: [
+                  { name: "Start"},
+              ]
+          })
+        );
       } else {
-        // Display login as failed
-        setInvalidLogin(true);
+        // Reset fields on failed attempt
+        onChangeUsername(null)
+        onChangePassword(null);
+        
       }
     }
 

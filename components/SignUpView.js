@@ -11,13 +11,22 @@ const SignUpView = () => {
     const [passwordOne, onChangePasswordOne] = React.useState(null);
     const [passwordTwo, onChangePasswordTwo] = React.useState(null);
     const [usernameTaken, setUsernameTaken] = React.useState(false);
+    const [passwordInvalid, setPasswordInvalid] = React.useState(false);
     const dispatch = useDispatch();
     const navigation = useNavigation();
 
     const signup = async () => {
+      // Check that we have both matching passwords
+      // Surely we could do this when text changes but, next time
+      if (passwordOne != passwordTwo || passwordOne == undefined) {
+        setPasswordInvalid(true);
+        return;
+      }
+
+      setPasswordInvalid(false);
+
       let res = await axios.post("http://127.0.0.1:8000/signup", {
         username: username,
-        // Add a check that we have both matching passwords
         password: passwordOne,
       }, {
         headers: {
@@ -35,7 +44,15 @@ const SignUpView = () => {
         // Store username in state, to use in common address related activities
         dispatch(setUsername(username));
 
-        navigation.navigate("Start");
+        // This resets the stack, so we cant swipe back to splash screen
+        navigation.dispatch(
+          CommonActions.reset({
+              index: 0,
+              routes: [
+                  { name: "Start"},
+              ]
+          })
+        );
       } else {
         // Display failed username field. 
         setUsernameTaken(true);
@@ -53,7 +70,7 @@ const SignUpView = () => {
       value={username}
       placeholder="Username"
       autoCapitalize="none"
-      style={tw`w-80 h-15 pl-5 rounded-lg bg-gray-300`}
+      style={[tw`w-80 h-15 pl-5 rounded-lg bg-gray-300`, usernameTaken ? {borderColor: "red", borderWidth: 2}: null]}
       />
 
       <Text style={tw`mt-5 w-80`}>New password</Text>
@@ -63,7 +80,7 @@ const SignUpView = () => {
       value={passwordOne}
       placeholder="Password"
       autoCapitalize="none"
-      style={tw`w-80 h-15 mt-2 pl-5 rounded-lg bg-gray-300`}
+      style={[tw`w-80 h-15 mt-2 pl-5 rounded-lg bg-gray-300`, passwordInvalid ? {borderColor: "red", borderWidth: 2}: null]}
       secureTextEntry={true}
       passwordRules="minlength: 5;"
       />
@@ -75,7 +92,7 @@ const SignUpView = () => {
       value={passwordTwo}
       placeholder="Password"
       autoCapitalize="none"
-      style={tw`w-80 h-15 mt-3 pl-5 rounded-lg bg-gray-300`}
+      style={[tw`w-80 h-15 mt-3 pl-5 rounded-lg bg-gray-300`, passwordInvalid ? {borderColor: "red", borderWidth: 2}: null]}
       secureTextEntry={true}
       />
 
