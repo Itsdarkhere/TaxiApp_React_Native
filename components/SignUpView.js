@@ -4,6 +4,7 @@ import React from 'react'
 import tw from "twrnc"
 import { useDispatch } from 'react-redux';
 import { setUsername } from '../slices/userSlice';
+import { CommonActions } from '@react-navigation/native';
 const axios = require('axios').default;
 
 const SignUpView = () => {

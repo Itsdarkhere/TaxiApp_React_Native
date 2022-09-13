@@ -34,6 +34,8 @@ const NavigateScreen = () => {
               "Content-type": "application/json; charset=UTF-8",
             }
         });
+
+        console.log(res.data);
     }
 
   return (

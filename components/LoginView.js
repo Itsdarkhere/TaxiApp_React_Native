@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 const axios = require('axios').default;
 import { useDispatch } from 'react-redux';
 import { setUsername } from '../slices/userSlice';
+import { CommonActions } from '@react-navigation/native';
 
 const LoginView = () => {
     const [username, onChangeUsername] = React.useState(null);
