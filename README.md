@@ -9,10 +9,10 @@ Splash, Login, Signup, location checkup, routing, pricing
 - Backend for login/signup in another repo. 
 
 # Backend handles:
--Login
--Signup
--frequent routes population
--adding frequent routes.
+-Login\n
+-Signup\n
+-frequent routes population\n
+-adding frequent routes.\n
 
 
 # Main functionalities in a gif: 
