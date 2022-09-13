@@ -12,13 +12,14 @@ const OrderCard = () => {
     const travelTimeInformation = useSelector(selectTravelTimeInformation);
     const navigation = useNavigation();
 
+    const SURGE_MULTIPLIER = 1.1;
+
   return (
     <View style={tw`h-full items-center`}>
         {/* Time, point A, point B */}
         <View style={tw`flex-row`}>
             <View style={tw`w-21 mt-2 h-21 items-center justify-center bg-gray-200 rounded-lg`}>
-                <Text style={tw`text-black text-lg font-bold`}>{travelTimeInformation?.distance.text}</Text>
-                <Text style={tw`text-black text-xs font-semibold`}>MIN</Text>
+                <Text style={tw`text-black font-bold`}>{travelTimeInformation?.distance?.text}</Text>
             </View>
             <View style={tw`w-70 pl-1`}>
                 <TouchableOpacity style={tw`h-10 rounded-lg w-full bg-gray-200 mt-2 justify-center`}>
@@ -37,7 +38,10 @@ const OrderCard = () => {
             color="black"
             />
             <View style={tw`pl-5 h-full justify-center`}>
-                <Text style={tw`font-semibold text-lg`}>Price:</Text>
+                <Text style={tw`font-semibold text-lg`}>Price: {new Intl.NumberFormat(undefined, {
+                    style: "currency",
+                    currency: "EUR"
+                }).format((travelTimeInformation?.duration?.value * SURGE_MULTIPLIER) / 100)}</Text>
             </View>
         </View>
         {/* Order button */}

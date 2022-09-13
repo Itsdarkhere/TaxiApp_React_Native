@@ -1,35 +1,49 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { Icon } from "react-native-elements";
 import tw from "twrnc"
-import React from 'react'
+const axios = require('axios').default;
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux';
+import { selectUsername } from '../slices/userSlice';
+import { selectDestination } from '../slices/navSlice';
 
 const WhereCard = () => {
     const navigation = useNavigation();
-    const fillerDestinations = [
-        {
-            id: 1,
-            address: "Tehtaankatu 12",
-        },
-        {
-            id: 2,
-            address: "Iso Robertinkatu 10",
-        },
-        {
-            id: 3,
-            address: "Lönnrotinkatu 12",
-        },
-        {
-            id: 4,
-            address: "Linnanmäki",
-        },
-    ]
+    const username = useSelector(selectUsername);
+    const destination = useSelector(selectDestination);
+    const [addresses, setAddresses] = React.useState(null);
+
+
+    // Gets the 5 most used destinations
+    const getRegularRoutes = async () => {
+        let res = await axios.post("http://127.0.0.1:8000/get_regular_routes", {
+            username: username,
+            // Password not needed by the api
+            password: "",
+          }, {
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+            }
+        });
+
+        // Insert list to state
+        if (res?.data?.addresses) {
+            console.log(res.data);
+            setAddresses(res.data.addresses);
+        }
+    }
+
+    // refresh on destination change
+    useEffect(() => {
+        getRegularRoutes();
+    }, [destination])
 
   return (
     <View style={tw`h-full bg-white`}>
         <TouchableOpacity 
-        style={tw`flex-row justify-center items-center bg-gray-300 self-center h-15 w-90 
+        style={tw`flex-row justify-center items-center bg-gray-300 self-center h-15 w-100 
         z-50 rounded-xl mt-5`}
         onPress={() => navigation.navigate('Navigate')}
         >
@@ -42,18 +56,22 @@ const WhereCard = () => {
             <Text style={tw`pl-2 text-black font-semibold text-base`}>Where to ?</Text>
         </TouchableOpacity>
         {/* Previously used locations */}
-        <FlatList
-        data={fillerDestinations}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        renderItem={({item: { address }}) => (
-            <TouchableOpacity style={tw`bg-gray-200 w-2/5 h-15 ml-4 rounded-lg mt-4 justify-center`}>
-                <Text style={tw`font-semibold text-black pl-3 pr-3`}>{address}</Text>
-            </TouchableOpacity>
-        )}
-        >
-
-        </FlatList>
+        <ScrollView style={{flexGrow: 0, marginTop: 2}}>
+            {addresses?.map((address) => {
+                return (
+                    <TouchableOpacity key={address} 
+                    style={tw`bg-gray-200 pl-3 pr-3 flex-row w-90 mt-2 h-10 ml-8 rounded-lg items-center justify-between`}>
+                        <Text style={tw`font-semibold text-black`}>{address}</Text>
+                        <Icon
+                        size={14}
+                        type="font-awesome-5"
+                        name="arrow-right"
+                        color="black"
+                        />
+                    </TouchableOpacity>
+                )
+            })}
+        </ScrollView>
     </View>
   )
 }

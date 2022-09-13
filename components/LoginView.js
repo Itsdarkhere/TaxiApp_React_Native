@@ -2,12 +2,44 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import tw from "twrnc"
 import React, { useRef } from 'react'
 import { useNavigation } from '@react-navigation/native';
+const axios = require('axios').default;
+import { useDispatch } from 'react-redux';
+import { setUsername } from '../slices/userSlice';
 
 const LoginView = () => {
     const [username, onChangeUsername] = React.useState(null);
     const [password, onChangePassword] = React.useState(null);
+    const [invalidLogin, setInvalidLogin] = React.useState(false);
+    const dispatch = useDispatch();
     const navigation = useNavigation();
     let passwordRef = useRef();
+
+    const login = async () => {
+      let res = await axios.post("http://127.0.0.1:8000/login", {
+        username: username,
+        password: password,
+      }, {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        }
+      });
+
+      if (res?.data?.success) {
+        setInvalidLogin(false);
+
+        // In prod we would use react-native-keychain
+        // to store the login, but expo managed workflow does not support native modules.
+        // And since Im not going even close to prod with this, I wont spend time on it
+        
+        // Store username in state, to use in common address related activities
+        dispatch(setUsername(username));
+        // Navigate to start
+        navigation.navigate("Start");
+      } else {
+        // Display login as failed
+        setInvalidLogin(true);
+      }
+    }
 
   return (
     <View style={tw`h-full p-10 justify-center items-center`}>
@@ -50,7 +82,7 @@ const LoginView = () => {
       {/* Login button */}
       {/* TODO: Add possibility to check values on backend */}
       <TouchableOpacity style={tw`mt-10 h-17 bg-black items-center justify-center w-80 rounded-lg`} 
-      onPress={() => navigation.navigate("Start")}>
+      onPress={() => login()}>
         <Text style={tw`text-white font-semibold text-base`}>Login</Text>
       </TouchableOpacity>
 

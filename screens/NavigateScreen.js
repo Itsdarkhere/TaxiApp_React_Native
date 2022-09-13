@@ -6,17 +6,35 @@ import { useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { selectOrigin, setDestination, setOrigin } from '../slices/navSlice';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+const axios = require('axios').default;
+import { selectUsername } from '../slices/userSlice';
 import tw from "twrnc"
 
 const NavigateScreen = () => {
     const dispatch = useDispatch();
     const origin = useSelector(selectOrigin);
+    const username = useSelector(selectUsername);
     const ref = useRef();
     const navigation = useNavigation();
 
     useEffect(() => {
         if (origin?.address) ref.current?.setAddressText(origin.address);
     }, [origin])
+
+    const add_address = async (address) => {
+        let res = await axios.post("http://127.0.0.1:8000/add_address", {
+            login: {
+                username: username,
+                // Password not needed by the api, but cant be empty
+                password: "notempty",
+            },
+            address: address,
+          }, {
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+            }
+        });
+    }
 
   return (
     <View style={tw`bg-gray-200 h-full pt-5`}>
@@ -86,6 +104,9 @@ const NavigateScreen = () => {
                     address: data.description
                 })
             )
+            
+            // Adds address to the database
+            add_address(data.description);
 
             navigation.navigate("Order");
         }}
